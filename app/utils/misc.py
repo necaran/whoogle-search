@@ -79,7 +79,6 @@ def get_request_url(url: str) -> str:
 
 
 def get_proxy_host_url(r: Request, default: str, root=False) -> str:
-    scheme = r.headers.get('X-Forwarded-Proto', 'https')
     http_host = r.headers.get('X-Forwarded-Host')
 
     full_path = r.full_path if not root else ''
@@ -90,9 +89,9 @@ def get_proxy_host_url(r: Request, default: str, root=False) -> str:
         prefix = os.environ.get('WHOOGLE_URL_PREFIX', '')
         if prefix:
             prefix = f'/{re.sub("[^0-9a-zA-Z]+", "", prefix)}'
-        return f'{scheme}://{http_host}{prefix}{full_path}'
+        return f'//{http_host}{prefix}{full_path}'
 
-    return default
+    return default.replace('http:', '', 1)
 
 
 def check_for_update(version_url: str, current: str) -> int:
